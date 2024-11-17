@@ -52,7 +52,6 @@ fn recursive_printing(node: Node, depth: usize) {
             }
         }
         NodeType::Comment(content) => println!("{spacer}| Comment - {content}"),
-        _ => print!("")
     }
 }
 
