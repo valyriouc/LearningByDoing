@@ -4,6 +4,7 @@ use crate::html::Parser;
 
 mod dom;
 mod html;
+mod css;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -13,6 +14,27 @@ fn main() {
         "help" => show_help(),
         _ => panic!("{}", format!("Unknown command: {command}"))
     }
+}
+
+// todo: parser should be recover from invalid html
+fn show_invalid_dom_tree() {
+    let html = r#"
+        <html>
+            <head>
+                <title>Testing</title>
+            </head>
+            <body>
+                <!-- This is a comment -->
+                <h1>Title</h1>
+                <div id="main" class="test">
+                    <p>Hello <em>world</em>!</p
+                </div>
+            </body>
+        </html>
+        "#;
+
+    let root = Parser::parse(html.to_string());
+    recursive_printing(root, 0);
 }
 
 fn show_dom_tree() {

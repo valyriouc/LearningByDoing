@@ -1,5 +1,6 @@
 ﻿use std::collections::HashMap;
 use crate::dom;
+use crate::css;
 
 pub struct Parser {
     pos: usize,
@@ -131,6 +132,62 @@ impl Parser {
             attributes.insert(name, value);
         }
         attributes
+    }
+
+    fn parse_simple_selector(&mut self) -> css::SimpleSelector {
+        let mut selector = css::SimpleSelector {
+            tag_name: None,
+            id: None,
+            class: Vec::new()
+        };
+
+        while !self.eof() {
+            match self.next_char() {
+                '#' => {
+                    self.consume_char();
+                    selector.id = Some(self.parse_identifier());
+                }
+                '.' => {
+                    self.consume_char();
+                    selector.class.push(self.parse_identifier());
+                }
+                '*' => {
+                    self.consume_char();
+                }
+                c if Self::valid_identifier_char(c) => {
+                    selector.tag_name = Some(self.parse_identifier());
+                }
+                _ => break
+            }
+        }
+    }
+
+    fn valid_identifier_char(c: char) -> bool {
+        matches!(c, 'a'..='z' | 'A'..='Z' | '0'..='9' | '-' | '_')
+    }
+
+    fn parse_rule(&mut self) -> css::Rule {
+        css::Rule {
+            selectors: self.parse_selectors(),
+            declarations: self.parse_declarations()
+        }
+    }
+
+    // todo: finish the css parser
+    // todo: writing the parsers from new on
+    fn parse_selectors(&mut self) -> Vec<css::Selector> {
+        let mut selectors = Vec::new();
+        loop {
+            selectors.push(css::Selector::Simple(self.parse_simple_selector()));
+            self.consume_whitespace();
+            match self.next_char() {
+                ',' => { self.consume_char(); self.consume_whitespace(); }
+                '{' => break,
+                c => panic!("Unexpected character {} in selector list", c)
+            }
+        }
+        selectors.sort_by(|a,b| b.specificity().cmp(&a.specificity()));
+        selectors
     }
 
     pub fn parse(source: String) -> dom::Node {

@@ -9,7 +9,6 @@ pub struct ElementData {
 pub type AttrMap = HashMap<String, String>;
 
 // represents the type of node
-// todo: get an in-depth look about rust enums
 pub enum NodeType {
     Text(String),
     Element(ElementData),
