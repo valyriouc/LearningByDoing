@@ -40,7 +40,7 @@ impl Parser {
         while !self.eof() && test(self.next_char()) {
             result.push(self.consume_char());
         }
-        return result;
+        result
     }
 
     fn consume_whitespace(&mut self) {
@@ -53,11 +53,24 @@ impl Parser {
     }
 
     fn parse_node(&mut self) -> dom::Node {
-        if self.starts_with("<") {
+        if self.starts_with("<!--") {
+            self.parse_comment()
+        }
+        else if self.starts_with("<") {
             self.parse_element()
-        } else {
+        }
+        else {
             self.parse_text()
         }
+    }
+
+    fn parse_comment(&mut self) -> dom::Node {
+        self.expect("<!--");
+        self.consume_whitespace();
+        let node = dom::comment(self.consume_while(|c| c != '-'));
+        self.consume_whitespace();
+        self.expect("-->");
+        node
     }
 
     fn parse_nodes(&mut self) -> Vec<dom::Node> {
@@ -88,7 +101,7 @@ impl Parser {
         self.expect(&tag_name);
         self.expect(">");
 
-        return dom::elem(tag_name, attrs, children);
+        dom::elem(tag_name, attrs, children)
     }
 
     fn parse_attr(&mut self) -> (String, String) {

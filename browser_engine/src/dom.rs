@@ -29,7 +29,6 @@ pub fn text(data: String) -> Node {
     Node {
         children: Vec::new(), node_type: NodeType::Text(data)
     }
-
 }
 
 pub fn comment(data: String) -> Node {

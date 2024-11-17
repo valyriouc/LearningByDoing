@@ -22,6 +22,7 @@ fn show_dom_tree() {
                 <title>Testing</title>
             </head>
             <body>
+                <!-- This is a comment -->
                 <h1>Title</h1>
                 <div id="main" class="test">
                     <p>Hello <em>world</em>!</p>
@@ -37,7 +38,7 @@ fn show_dom_tree() {
 fn recursive_printing(node: Node, depth: usize) {
     let spacer = (0..depth).map(|_| " ").collect::<String>();
     match node.node_type {
-        NodeType::Text(content) => println!("{spacer}{content}"),
+        NodeType::Text(content) => println!("{spacer}| {content}"),
         NodeType::Element(element) => {
             let tag_name = element.tag_name;
             println!("{spacer}| -> Tag: {tag_name}");
@@ -50,6 +51,7 @@ fn recursive_printing(node: Node, depth: usize) {
                 recursive_printing(child, depth + 1);
             }
         }
+        NodeType::Comment(content) => println!("{spacer}| Comment - {content}"),
         _ => print!("")
     }
 }
