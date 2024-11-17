@@ -64,7 +64,7 @@ impl Parser {
         let mut nodes = Vec::new();
         loop {
             self.consume_whitespace();
-            if (self.eof() || self.starts_with("</")) {
+            if self.eof() || self.starts_with("</") {
                 break;
             }
             nodes.push(self.parse_node());

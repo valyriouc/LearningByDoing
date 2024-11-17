@@ -2,8 +2,8 @@
 
 // represents the actual content of a element node
 pub struct ElementData {
-    tag_name: String,
-    attrs: AttrMap,
+    pub tag_name: String,
+    pub attrs: AttrMap,
 }
 
 pub type AttrMap = HashMap<String, String>;
